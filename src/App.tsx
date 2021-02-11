@@ -1,6 +1,8 @@
-import React, { useCallback, useState, Fragment } from "react";
+import React, { useCallback, useState, Fragment, useEffect } from "react";
 import styled from "styled-components";
 import d2i from "dom-to-image";
+import * as firebase from "firebase/app";
+import "firebase/analytics";
 
 import { Constants } from "./common";
 
@@ -15,8 +17,15 @@ import Divider from "./component/Divider";
 import Footer from "./component/Footer";
 import Header from "./component/Header";
 
+firebase.default.initializeApp(Constants.FIREBASE_CONFIGS);
+firebase.default.analytics();
+
 const PROFILE_SIZE = 300;
 function App() {
+  useEffect(() => {
+    firebase.default.analytics().logEvent("app-mount");
+  }, []);
+
   const [image, setImage] = useState<string>();
 
   const [startColor, setStartColor] = useState(Constants.DEFAULT_START_COLOR);
@@ -27,11 +36,19 @@ function App() {
   );
 
   const onChangeImage = useCallback((event: any) => {
+    firebase.default.analytics().logEvent("upload-image");
+
     const url = URL.createObjectURL(event.currentTarget.files?.[0]);
     setImage(url);
   }, []);
 
   const onSave = useCallback(() => {
+    firebase.default.analytics().logEvent("download-image", {
+      borderWidth,
+      startColor,
+      endColor,
+    });
+
     const node = document.getElementById("capture-area")!;
 
     const style = {
@@ -54,7 +71,7 @@ function App() {
       anchor.download = `clubhouse_profile_${Date.now()}.png`;
       anchor.click();
     });
-  }, [scale]);
+  }, [borderWidth, startColor, endColor, scale]);
 
   return (
     <Fragment>
