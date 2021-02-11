@@ -1,7 +1,7 @@
 import React, { useCallback, useState, Fragment, useEffect } from "react";
 import styled from "styled-components";
 import d2i from "dom-to-image";
-import * as firebase from "firebase/app";
+import firebase from "firebase/app";
 
 import { Constants } from "./common";
 
@@ -20,7 +20,7 @@ import { isAppleMobile } from "./utils";
 const PROFILE_SIZE = 300;
 function App() {
   useEffect(() => {
-    firebase.default.analytics().logEvent("app-mount");
+    firebase.analytics().logEvent("app-mount");
   }, []);
 
   const [image, setImage] = useState<string>();
@@ -33,14 +33,14 @@ function App() {
   );
 
   const onChangeImage = useCallback((event: any) => {
-    firebase.default.analytics().logEvent("upload-image");
+    firebase.analytics().logEvent("upload-image");
 
     const url = URL.createObjectURL(event.currentTarget.files?.[0]);
     setImage(url);
   }, []);
 
   const onSave = useCallback(async () => {
-    firebase.default.analytics().logEvent("download-image", {
+    firebase.analytics().logEvent("download-image", {
       borderWidth,
       startColor,
       endColor,

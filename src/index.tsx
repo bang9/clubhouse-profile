@@ -4,11 +4,12 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-import * as firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/analytics";
 import { Constants } from "./common";
 
-firebase.default.initializeApp(Constants.FIREBASE_CONFIGS);
-firebase.default.analytics();
+firebase.initializeApp(Constants.FIREBASE_CONFIGS);
+firebase.analytics();
 
 ReactDOM.render(
   <React.StrictMode>
