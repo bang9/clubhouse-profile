@@ -2,7 +2,6 @@ import React, { useCallback, useState, Fragment, useEffect } from "react";
 import styled from "styled-components";
 import d2i from "dom-to-image";
 import * as firebase from "firebase/app";
-import "firebase/analytics";
 
 import { Constants } from "./common";
 
@@ -16,9 +15,7 @@ import DownloadLabel from "./component/DownloadLabel";
 import Divider from "./component/Divider";
 import Footer from "./component/Footer";
 import Header from "./component/Header";
-
-firebase.default.initializeApp(Constants.FIREBASE_CONFIGS);
-firebase.default.analytics();
+import { isAppleMobile } from "./utils";
 
 const PROFILE_SIZE = 300;
 function App() {
@@ -42,7 +39,7 @@ function App() {
     setImage(url);
   }, []);
 
-  const onSave = useCallback(() => {
+  const onSave = useCallback(async () => {
     firebase.default.analytics().logEvent("download-image", {
       borderWidth,
       startColor,
@@ -64,6 +61,10 @@ function App() {
       quality: 1,
       style,
     };
+
+    if (isAppleMobile()) {
+      await d2i.toPng(node, param);
+    }
 
     d2i.toPng(node, param).then(function (url: string) {
       const anchor = document.createElement("a");
